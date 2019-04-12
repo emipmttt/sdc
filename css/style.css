@@ -1,0 +1,119 @@
+* {
+  font-family: "Roboto";
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  font-size: 14px
+}
+
+body {
+  background: #f1f1f1;
+  text-align: center
+}
+
+select {
+  border: solid 1px #c1c1c1;
+  border-radius: 2px;
+  width: 200px;
+  padding: 10px;
+}
+
+input {
+  border: solid 1px #e1e1e1;
+  border-radius: 2px;
+  width: calc(200px - 20px);
+  padding: 10px
+}
+
+button {
+  border: none;
+  border-radius: 2px;
+  width: calc(200px - 20px);
+  padding: 10px;
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, .5);
+  text-transform: uppercase;
+  transition: .4s
+}
+
+button:hover {
+  background: #c1c1c1;
+}
+
+input[type="radio"] {
+  width: auto !important
+}
+
+.radio-container {
+  width: 32%;
+  display: inline-block;
+  text-align: center
+}
+
+.box {
+  display: inline-block;
+}
+
+.tab {
+  width: calc(49% - 30px);
+  padding: 15px;
+  background: none;
+  border: none;
+  font-weight: bold;
+  display: inline-block;
+  transition: .4s;
+  border-bottom: 3px solid #ffffff;
+}
+
+.tab,
+.tab * {
+  cursor: pointer;
+}
+
+.tab:hover {
+  background: #f1f1f1;
+  border-bottom: 3px solid #f1f1f1;
+}
+
+.tab:focus {
+  outline: none;
+}
+
+.tab.active {
+  border-bottom: 3px solid blue;
+}
+
+.tabs {
+  border-bottom: solid 1px #333
+}
+
+.card {
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, .5);
+  border-radius: 10px;
+  margin: 10px;
+  display: inline-block;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.card-content {
+  padding: 10px;
+}
+
+.info {
+  color: #333;
+  transition: .5s
+}
+
+.blueText {
+  color: rgb(66, 186, 241)
+}
+
+.blueOutline {
+  border: solid 1px rgb(66, 186, 241);
+}
+
+.blueOutline:hover {
+  outline-color: rgb(66, 186, 241);
+}

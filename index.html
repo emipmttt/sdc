@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Simulador</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.js"></script>
+  <script src="https://unpkg.com/vuex@3.1.0/dist/vuex.js"></script>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <div id="app">
+    <div class="card" style="display:block">
+
+
+      <div class="card-content">
+        Tipo de ingreso<br>
+
+        <select v-model="tipoDeIngresoSeleccionado">
+          <option v-for="tipoDeIngreso in tiposDeIngreso">
+            {{tipoDeIngreso}}
+          </option>
+        </select>
+
+
+
+        <br>Tu Ingreso Mensual<br>
+        <input v-model="ingresoMensual" type="text" :enable="tipoDeIngresoSeleccionado">
+        <div v-show="ingresoMensual" style="padding:10px;">Credito Preautorizado: <b>{{creditoPreautorizado}}</b></div>
+
+        <br>Valor del Inmueble<br>
+        <input v-model="valorDelInmueble" type="text"><br><br>
+        <div :class="{info:infoMontoDeCredito}">
+          <img @click="infoMontoDeCredito = !infoMontoDeCredito" style="display:inline-block; width: 10px" src="img/pregunta.svg"> Monto de Credito<br>
+          <div v-if="!modificarMontoDeCredito">
+            <input @focus="modificarMontoDeCredito = true" v-model="montoDeCreditoMaximoFicitcio" :class="{blueOutline:infoMontoDeCredito}" type="text"><br><br>
+          </div>
+          <div v-else>
+            <input v-model="montoDeCreditoPorModificacion" :class="{blueOutline:infoMontoDeCredito}" type="text"><br><br>
+          </div>
+          <p v-show="infoMontoDeCredito" style="font-size: 12px;margin-top:-10px;position:relative" :class="{blueText:infoMontoDeCredito}">Si necesitas un credito menor tecelalo aquí </p>
+        </div>
+
+        <div class="tab" :class="{'active':tipoDePagoSeleccionado == 0}">
+          <input v-model="tipoDePagoSeleccionado" value="0" id="pago0" type="radio" style="display: none">
+          <label for="pago0">Pago<br> Fijo</label>
+        </div>
+
+        <div class="tab" :class="{'active':tipoDePagoSeleccionado == 1}">
+          <input v-model="tipoDePagoSeleccionado" value="1" id="pago1" type="radio" style="display: none">
+          <label for="pago1">Pago<br> Creciente</label>
+        </div>
+
+        <hr>
+        <br>
+        <input v-model="plazoSeleccionado" value="2" id="plazo2" type="radio">
+        <label for="plazo2">20 años</label>
+
+        <input v-model="plazoSeleccionado" value="1" id="plazo1" type="radio">
+        <label for="plazo1">15 años</label>
+
+        <input v-model="plazoSeleccionado" value="0" id="plazo0" type="radio">
+        <label for="plazo0">10 años</label>
+      </div>
+
+    </div>
+    <div is="hsbc" :tipo-de-ingreso="tipoDeIngresoSeleccionado" :monto-de-credito-por-modificacion="montoDeCreditoPorModificacion" :valor-del-inmueble="valorDelInmueble" :plazo="plazoSeleccionado" :tipo-de-pago="tipoDePagoSeleccionado" :producto-seleccionado="productoSeleccionado"></div>
+    <div is="santander" :tipo-de-ingreso="tipoDeIngresoSeleccionado" :monto-de-credito-por-modificacion="montoDeCreditoPorModificacion" :valor-del-inmueble="valorDelInmueble" :plazo="plazoSeleccionado" :tipo-de-pago="tipoDePagoSeleccionado" :producto-seleccionado="productoSeleccionado"></div>
+    <div is="banorte" :tipo-de-ingreso="tipoDeIngresoSeleccionado" :monto-de-credito-por-modificacion="montoDeCreditoPorModificacion" :valor-del-inmueble="valorDelInmueble" :plazo="plazoSeleccionado" :tipo-de-pago="tipoDePagoSeleccionado" :producto-seleccionado="productoSeleccionado"></div>
+    <div is="scotiabank" :tipo-de-ingreso="tipoDeIngresoSeleccionado" :monto-de-credito-por-modificacion="montoDeCreditoPorModificacion" :valor-del-inmueble="valorDelInmueble" :plazo="plazoSeleccionado" :tipo-de-pago="tipoDePagoSeleccionado" :producto-seleccionado="productoSeleccionado"></div>
+    <div is="banamex" :tipo-de-ingreso="tipoDeIngresoSeleccionado" :monto-de-credito-por-modificacion="montoDeCreditoPorModificacion" :valor-del-inmueble="valorDelInmueble" :plazo="plazoSeleccionado" :tipo-de-pago="tipoDePagoSeleccionado" :producto-seleccionado="productoSeleccionado"></div>
+    <div is="banregio" :tipo-de-ingreso="tipoDeIngresoSeleccionado" :monto-de-credito-por-modificacion="montoDeCreditoPorModificacion" :valor-del-inmueble="valorDelInmueble" :plazo="plazoSeleccionado" :tipo-de-pago="tipoDePagoSeleccionado" :producto-seleccionado="productoSeleccionado"></div>
+
+    <div v-for="banco in bancosPro" v-if="banco.valores.disponibilidad" class="card">
+      <div class="card-content">
+        <h2>{{banco.nombre}}</h2><br>
+        <div>Aforo: {{banco.valores.porcentajeDeCredito * 100}} %</div>
+        <div>Credito: $ {{banco.valores.montoDeCredito.toFixed(2)}} </div><br>
+        <div>Mensualidad: $ {{banco.valores.mensualidad.toFixed(2)}}</div>
+        <div>Ingresos: $ {{banco.valores.ingresos.toFixed(2)}}</div>
+        <div>Tasa: {{(banco.valores.tasa * 100).toFixed(2)}} %</div> <br>
+        <!-- <hr> enganche: {{banco.valores.enganche}} -->
+      </div>
+    </div>
+  </div>
+
+
+
+  <script src="js/bancos/hsbc.js"></script>
+  <script src="js/bancos/banorte.js"></script>
+  <script src="js/bancos/santander.js"></script>
+  <script src="js/bancos/scotiabank.js"></script>
+  <script src="js/bancos/banamex.js"></script>
+  <script src="js/bancos/banregio.js"></script>
+
+  <script src="js/calculos.js"></script>
+  <script src="js/store.js"></script>
+
+  <script>
+    const app = new Vue({
+      el: "#app",
+      store,
+      data: {
+        tiposDeIngreso: [
+          "Asalariado",
+          "Profesionista Independiente",
+          "Independiente",
+          "Socio de Empresa",
+          "Negocio Propio"
+        ],
+
+        productoSeleccionado: "Comprar mi Casa",
+        tipoDeIngresoSeleccionado: "Asalariado",
+        valorDelInmueble: "",
+        valorDelCredito: 0,
+
+        plazoSeleccionado: 2,
+        tipoDePagoSeleccionado: 0,
+
+        montoDeCreditoPorModificacion: undefined,
+        modificarMontoDeCredito: false,
+
+        ingresoMensual: "",
+
+        infoMontoDeCredito: false
+      },
+      computed: {
+        bancos() {
+          return store.state.bancos;
+        },
+        bancosPro() {
+          return this.bancos.sort((a, b) => {
+            return (parseFloat(a.valores.mensualidad) - parseFloat(b.valores.mensualidad));
+          });
+        },
+        creditoPreautorizado() {
+          if (this.tipoDeIngresoSeleccionado == "Asalariado") {
+            return parseFloat(this.ingresoMensual) * 50
+          } else {
+            return parseFloat(this.ingresoMensual) * 36
+          }
+        },
+
+        montoDeCreditoMaximoFicitcio() {
+          return this.valorDelInmueble * .9;
+        }
+
+      },
+      mounted() {
+        setInterval(() => {
+          this.$forceUpdate()
+        }, 10);
+      }
+
+    })
+  </script>
+</body>
+
+</html>
